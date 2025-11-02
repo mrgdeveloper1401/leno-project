@@ -1,22 +1,23 @@
 from django import forms
-from auth_app.models import User
+
+class RequestPhoneForm(forms.Form):
+    phone = forms.CharField(
+        label="شماره موبایل",
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'نام کاربری را وارد کنید',
+            'id': 'username'
+        })
+    )
 
 
-class SignupForm(forms.ModelForm):
-    confirm_password = forms.CharField(widget=forms.PasswordInput)
-
-    class Meta:
-        model = User
-        fields = ("phone", "password", "confirm_password")
-
-    def clean_confirm_password(self):
-        password = self.cleaned_data.get("password")
-        confirm_password = self.cleaned_data.get("confirm_password")
-        if password != confirm_password:
-            raise forms.ValidationError("Passwords don't match")
-        return confirm_password
-
-
-class LoginForm(forms.Form):
-    phone = forms.CharField()
-    password = forms.CharField(widget=forms.PasswordInput)
+class VerifyRequestPhoneForm(forms.Form):
+    code = forms.CharField(
+        max_length=6,
+        label="کد تایید",
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'کد تایید را وارد کنید',
+            'id': 'code'
+        })
+    )

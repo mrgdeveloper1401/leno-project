@@ -1,11 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa" dir="rtl" data-theme="minimal" data-layout="vertical" data-topbar="light" data-sidebar="light" data-sidebar-size="lg" data-sidebar-image="none" data-preloader="disable">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Premium Multipurpose Admin & Dashboard Template" name="description">
+    <meta content="Mordad" name="author">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="{% static 'minimal/images/favicon.ico' %}">
+
+    <!-- CSS Files -->
+    <link href="{% static 'minimal/assets/libs/jsvectormap/jsvectormap.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'minimal/assets/libs/swiper/swiper-bundle.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'minimal/assets/css/bootstrap-rtl.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'minimal/assets/css/icons.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'minimal/assets/css/app-rtl.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'minimal/assets/css/custom-rtl.min.css' %}" rel="stylesheet" type="text/css">
+
+    <!-- JavaScript Files -->
+    <script src="{% static 'minimal/assets/js/layout.js' %}"></script>
+
     {% block title %}  {% endblock %}
 </head>
 <body>
+    {% include 'partials/messages.html' %}
     {% block content %}{% endblock %}
+
+    <!-- JS -->
+    <script src="{% static 'minimal/assets/libs/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'minimal/assets/libs/simplebar/simplebar.min.js' %}"></script>
+    <script src="{% static 'minimal/assets/libs/node-waves/waves.min.js' %}"></script>
+    <script src="{% static 'minimal/assets/libs/feather-icons/feather.min.js' %}"></script>
+    <script src="{% static 'minimal/assets/js/pages/plugins/lord-icon-2.1.0.js' %}"></script>
+    <script src="{% static 'minimal/assets/js/plugins.js' %}"></script>
+
+    <!-- apexcharts -->
+    <script src="{% static 'minimal/assets/libs/apexcharts/apexcharts.min.js' %}"></script>
+
+    <!-- Vector map-->
+    <script src="{% static 'minimal/assets/libs/jsvectormap/jsvectormap.min.js' %}"></script>
+    <script src="{% static 'minimal/assets/libs/jsvectormap/maps/world-merc.js' %}"></script>
+
+    <!--Swiper slider js-->
+    <script src="{% static 'minimal/assets/libs/swiper/swiper-bundle.min.js' %}"></script>
+
+    <!-- Dashboard init -->
+    <script src="{% static 'minimal/assets/js/pages/dashboard-ecommerce.init.js' %}"></script>
+
+    <!-- App js -->
+    <script src="{% static 'minimal/assets/js/app.js' %}"></script>
 </body>
 </html>

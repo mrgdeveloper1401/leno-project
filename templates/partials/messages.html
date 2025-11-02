@@ -1,0 +1,30 @@
+{% if messages %}
+<div class="position-fixed top-0 end-0 p-3" style="z-index: 9999;">
+    {% for message in messages %}
+    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible alert-label-icon rounded-label fade show mb-2" role="alert" data-auto-dismiss="10000">
+        <i class="
+            {% if message.tags == 'success' %}ri-check-double-line
+            {% elif message.tags == 'danger' or message.tags == 'error' %}ri-error-warning-line
+            {% elif message.tags == 'warning' %}ri-notification-off-line
+            {% elif message.tags == 'info' %}ri-information-line
+            {% elif message.tags == 'primary' %}ri-user-smile-line
+            {% elif message.tags == 'secondary' %}ri-check-double-line
+            {% else %}ri-information-line
+            {% endif %}
+        label-icon"></i>
+        <strong>
+            {% if message.tags == 'success' %}موفقیت
+            {% elif message.tags == 'danger' or message.tags == 'error' %}خطا
+            {% elif message.tags == 'warning' %}هشدار
+            {% elif message.tags == 'info' %}اطلاعات
+            {% elif message.tags == 'primary' %}اولیه
+            {% elif message.tags == 'secondary' %}ثانویه
+            {% else %}پیام
+            {% endif %}
+        </strong>
+        - {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}

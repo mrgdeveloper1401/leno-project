@@ -196,7 +196,7 @@ if DEBUG is False:
 
 
 # coustom auth user
-AUTH_USER_MODEL = "auth_app.User"
+# AUTH_USER_MODEL = "auth_app.User"
 
 # config session cache
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"

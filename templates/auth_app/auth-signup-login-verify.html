@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    <title>تایید شماره تلفن | Velzon - قالب مدیریت و داشبورد</title>
+{% endblock %}
+
+{% block content %}
+    <!-- auth-page wrapper -->
+    <div class="auth-page-wrapper auth-bg-cover py-5 d-flex justify-content-center align-items-center min-vh-100">
+        <div class="bg-overlay"></div>
+        <!-- auth-page content -->
+        <div class="auth-page-content overflow-hidden pt-lg-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card overflow-hidden border-0">
+                            <div class="row g-0">
+                                <div class="col-lg-6">
+                                    <div class="p-lg-5 p-4 auth-one-bg h-100">
+                                        <div class="bg-overlay"></div>
+                                        <div class="position-relative h-100 d-flex flex-column">
+                                            <div class="mb-4">
+                                                <a href="#" class="d-block">
+                                                    <img src="{% static 'minimal/assets/images/logo-light.png' %}" alt="" height="18">
+                                                </a>
+                                            </div>
+                                            <div class="mt-auto">
+                                                <div class="mb-3">
+                                                    <i class="ri-double-quotes-l display-4 text-success"></i>
+                                                </div>
+
+                                                <div id="qoutescarouselIndicators" class="carousel slide" data-bs-ride="carousel">
+                                                    <div class="carousel-indicators">
+                                                        <button type="button" data-bs-target="#qoutescarouselIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                                                        <button type="button" data-bs-target="#qoutescarouselIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                                                        <button type="button" data-bs-target="#qoutescarouselIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                                                    </div>
+                                                    <div class="carousel-inner text-center text-white pb-5">
+                                                        <div class="carousel-item active">
+                                                            <p class="fs-15 fst-italic">"عالی! کد تمیز، طراحی تمیز، سفارشی سازی آسان. بسیار متشکرم!"</p>
+                                                        </div>
+                                                        <div class="carousel-item">
+                                                            <p class="fs-15 fst-italic">"موضوع با پشتیبانی شگفت انگیز مشتری واقعا عالی است."</p>
+                                                        </div>
+                                                        <div class="carousel-item">
+                                                            <p class="fs-15 fst-italic">"عالی! کد تمیز، طراحی تمیز، سفارشی سازی آسان. بسیار متشکرم!"</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- end carousel -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- end col -->
+
+                                <div class="col-lg-6">
+                                    <div class="p-lg-5 p-4">
+                                        <div>
+                                            <h5 class="text-primary">تایید شماره تلفن</h5>
+                                            <p class="text-muted">کد ارسال شده به شماره تلفن خود را وارد کنید.</p>
+                                        </div>
+
+                                        <div class="mt-4">
+                                            <form method="post" action="">
+                                                {% csrf_token %}
+
+                                                {% if form.non_field_errors %}
+                                                    <div class="alert alert-danger">
+                                                        {% for error in form.non_field_errors %}
+                                                            {{ error }}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% endif %}
+
+                                                <div class="mb-3">
+                                                    {{ form.phone.label_tag }}
+                                                    {{ form.phone }}
+                                                    {% if form.phone.errors %}
+                                                        <div class="text-danger">
+                                                            {{ form.phone.errors }}
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    {{ form.code.label_tag }}
+                                                    <div class="position-relative auth-pass-inputgroup mb-3">
+                                                        {{ form.code }}
+                                                    </div>
+                                                    {% if form.code.errors %}
+                                                        <div class="text-danger">
+                                                            {{ form.code.errors }}
+                                                        </div>
+                                                    {% endif %}
+                                                    <small class="text-muted">کد ۶ رقمی ارسال شده به تلفن همراه خود را وارد کنید.</small>
+                                                </div>
+
+                                                <div class="mt-4">
+                                                    <button class="btn btn-success w-100" type="submit">تایید و ادامه</button>
+                                                </div>
+                                            </form>
+                                        </div>
+
+                                        <div class="mt-3 text-center">
+                                            <p class="mb-0">کد را دریافت نکردید؟
+                                                <a href="{% url 'auth_app:login' %}" class="fw-semibold text-primary text-decoration-underline">ارسال مجدد کد</a>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- end col -->
+                            </div>
+                            <!-- end row -->
+                        </div>
+                        <!-- end card -->
+                    </div>
+                    <!-- end col -->
+                </div>
+                <!-- end row -->
+            </div>
+            <!-- end container -->
+        </div>
+        <!-- end auth page content -->
+    </div>
+    <!-- end auth-page-wrapper -->
+{% endblock %}

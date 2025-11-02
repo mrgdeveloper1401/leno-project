@@ -8,5 +8,5 @@ class CustomLoginRequiredMixin(UserPassesTestMixin, View):
 
     def dispatch(self, request, *args, **kwargs):
         if not self.test_func():
-            return redirect('auth_app:home')
+            return redirect('auth_app:profile')
         return super().dispatch(request, *args, **kwargs)
