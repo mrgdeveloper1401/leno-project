@@ -193,3 +193,7 @@ else:
 # config package corsheaders
 if DEBUG is False:
     CORS_ALLOWED_ORIGINS = config("PRODUCTION_CORS_ALLOWED_ORIGINS", cast=Csv())
+
+
+# coustom auth user
+AUTH_USER_MODEL = "auth_app.User"
