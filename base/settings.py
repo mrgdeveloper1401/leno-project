@@ -200,3 +200,7 @@ if DEBUG is False:
 
 # config session cache
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+
+# login conf
+# if user not authenticate redirect into route login
+LOGIN_URL = "/auth/request_phone/"

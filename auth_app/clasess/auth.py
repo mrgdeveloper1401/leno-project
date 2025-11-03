@@ -41,8 +41,9 @@ class AuthService:
 
     def logout(self, access_token, refresh_token):
         request_body = {
-            "access_token": access_token,
+            "refresh_token": refresh_token,
             "Content-Type": "application/json"
         }
+        self.headers['Authorization'] = 'Bearer ' + access_token
         response = requests.post(self.LOGOUT_URL, json=request_body, headers=self.headers, timeout=20)
         return response.json()

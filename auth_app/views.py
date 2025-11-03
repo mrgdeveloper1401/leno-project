@@ -121,7 +121,10 @@ class ProfileView(LoginRequiredMixin, View):
             context_data["is_error"] = True
             return render(request, self.template_name, context_data)
 
+
 def logout_view(request: HttpRequest):
+    import ipdb
+    ipdb.set_trace()
     if request.user.is_authenticated:
         # get token by user
         user_token = UserToken.objects.filter(
@@ -142,4 +145,5 @@ def logout_view(request: HttpRequest):
         return redirect("auth_app:login")
     else:
         return redirect("auth_app:login") # TODO, redirect to home page
+
 
