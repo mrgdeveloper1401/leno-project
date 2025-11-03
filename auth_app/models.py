@@ -13,4 +13,4 @@ class UserToken(models.Model):
 
     class Meta:
         db_table = 'auth_user_token'
-        ordering = ("-id",)
+        ordering = ("id",)

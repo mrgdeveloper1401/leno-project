@@ -15,8 +15,8 @@ from base.utils.custom_user_passes_test import CustomLoginRequiredMixin
 
 class RequestPhoneView(View):
     def get(self, request: HttpRequest):
-        if request.user.is_authenticated:
-            return redirect('auth_app:profile')
+        # if request.user.is_authenticated:
+        #     return redirect('auth_app:profile')
 
         form = RequestPhoneForm()
         return render(request, "auth_app/auth-signup-login.html", {"form": form})
@@ -77,7 +77,7 @@ class VerifyRequestPhoneView(View):
                 self._clean_verification_session(request)
 
                 messages.success(request, "احراز هویت با موفقیت انجام شد")
-                return redirect('auth_app:profile')
+                return redirect('auth_app:login')
 
             else:
                 messages.error(request, result['Error'])
@@ -98,8 +98,6 @@ class ProfileView(LoginRequiredMixin, ListView):
 
 
 def logout_view(request: HttpRequest):
-    # import ipdb
-    # ipdb.set_trace()
     if request.user.is_authenticated:
         # get token by user
         user_token = UserToken.objects.filter(
@@ -115,8 +113,8 @@ def logout_view(request: HttpRequest):
             refresh_token=user_token.refresh_token
         )
 
-        auth_login(request, user_token.user)
+        auth_logout(request)
         messages.success(request, "شما با موفقیت از حساب خود خارج شدید")
         return redirect("auth_app:login")
     else:
-        return redirect("auth_app:login")
+        return redirect("auth_app:login") # TODO, redirect to home page
