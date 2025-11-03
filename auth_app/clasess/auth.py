@@ -45,5 +45,4 @@ class AuthService:
             "Content-Type": "application/json"
         }
         response = requests.post(self.LOGOUT_URL, json=request_body, headers=self.headers, timeout=20)
-        print(response)
         return response.json()

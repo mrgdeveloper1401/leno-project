@@ -5,12 +5,11 @@ from django.http import HttpRequest
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.models import User
-from django.views.generic import ListView
 
 from auth_app.clasess import AuthService
+from auth_app.clasess.profile import ProfileService
 from auth_app.forms import RequestPhoneForm, VerifyRequestPhoneForm
 from auth_app.models import UserToken
-from base.utils.custom_user_passes_test import CustomLoginRequiredMixin
 
 
 class RequestPhoneView(View):
@@ -93,9 +92,32 @@ class VerifyRequestPhoneView(View):
                 del request.session[key]
 
 
-class ProfileView(LoginRequiredMixin, ListView):
+class ProfileView(LoginRequiredMixin, View):
     template_name = "auth_app/auth-profile.html"
 
+    def get(self, request: HttpRequest):
+        # import ipdb
+        # ipdb.set_trace()
+        profile = ProfileService()
+
+        # get token
+        user_access_token = UserToken.objects.filter(
+            user_id=request.user.id
+        ).only("access_token").last()
+
+        # send token into service
+        response = profile.get_profile_details(user_access_token.access_token)
+        response_success = response['Success']
+
+        context_data = {}
+
+        if response_success == "True" or response_success is True:
+            context_data["data"] = response['Result']
+            return render(request, self.template_name, context_data)
+        else:
+            error_response = response['Error']
+            context_data["data"] = error_response
+            return render(request, self.template_name, context_data)
 
 def logout_view(request: HttpRequest):
     if request.user.is_authenticated:
