@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>استعلام ثبت احوال</h2>
+    
+    <!-- show server error -->
+    {% if is_error %}
+        <div class="alert alert-danger mt-3">
+            <h4>خطای پذیرنده!</h4>
+            {{ data }}
+        </div>
+    {% endif %}
+
+    {% if not is_error and data %}
+        <div class="alert alert-success mt-3">
+            <h4>نتایج استعلام:</h4>
+            <table class="table table-bordered">
+                {% for key, value in data.items %}
+                <tr>
+                    <th>{{ key }}</th>
+                    <td>{{ value }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    {% endif %}
+
+    <!-- فرم -->
+    <form method="post" class="mt-4">
+        {% csrf_token %}
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    {{ form.birth_day.label_tag }}
+                    {{ form.birth_day }}
+                    {% if form.birth_day.errors %}
+                        <div class="text-danger">
+                            {% for error in form.birth_day.errors %}
+                                <small>{{ error }}</small><br>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="form-group">
+                    {{ form.national_id.label_tag }}
+                    {{ form.national_id }}
+                    {% if form.national_id.errors %}
+                        <div class="text-danger">
+                            {% for error in form.national_id.errors %}
+                                <small>{{ error }}</small><br>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary mt-3">استعلام</button>
+    </form>
+</div>
+{% endblock %}

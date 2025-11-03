@@ -21,3 +21,18 @@ class VerifyRequestPhoneForm(forms.Form):
             'id': 'code'
         })
     )
+
+
+class CivilRegistry(forms.Form):
+    birth_day = forms.DateField(
+        widget=forms.DateInput(
+            format='%Y/%m/%d',
+            attrs={
+                "class": "form-control",
+                "placeholder": "1379/07/30",
+                "type": "text"
+            }
+        ),
+        input_formats=['%Y/%m/%d']
+    )
+    national_id = forms.CharField()

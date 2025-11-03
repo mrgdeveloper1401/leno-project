@@ -27,3 +27,6 @@ djangorestframework-simplejwt==5.5.1
 
 # cors
 django-cors-headers==4.9.0
+
+# shamsi date
+jdatetime==5.2.0

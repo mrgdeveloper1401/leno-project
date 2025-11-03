@@ -8,8 +8,12 @@ from django.contrib.auth.models import User
 
 from auth_app.clasess import AuthService
 from auth_app.clasess.profile import ProfileService
-from auth_app.forms import RequestPhoneForm, VerifyRequestPhoneForm
 from auth_app.models import UserToken
+from auth_app.forms import (
+    RequestPhoneForm,
+    VerifyRequestPhoneForm,
+    CivilRegistry
+)
 
 
 class RequestPhoneView(View):
@@ -18,7 +22,7 @@ class RequestPhoneView(View):
         #     return redirect('auth_app:profile')
 
         form = RequestPhoneForm()
-        return render(request, "auth_app/auth-signup-login.html", {"form": form})
+        return render(request, "auth_app/login/auth-signup-login.html", {"form": form})
 
     def post(self, request: HttpRequest):
         form = RequestPhoneForm(request.POST)
@@ -46,7 +50,7 @@ class VerifyRequestPhoneView(View):
         if phone is None:
             return redirect('auth_app:login')
         form = VerifyRequestPhoneForm()
-        return render(request, "auth_app/auth-signup-login-verify.html", {"form": form})
+        return render(request, "auth_app/login/auth-signup-login-verify.html", {"form": form})
 
     def post(self, request: HttpRequest):
         form = VerifyRequestPhoneForm(request.POST)
@@ -93,7 +97,7 @@ class VerifyRequestPhoneView(View):
 
 
 class ProfileView(LoginRequiredMixin, View):
-    template_name = "auth_app/auth-profile.html"
+    template_name = "auth_app/profile/auth-profile.html"
 
     def get(self, request: HttpRequest):
         # import ipdb
@@ -123,8 +127,6 @@ class ProfileView(LoginRequiredMixin, View):
 
 
 def logout_view(request: HttpRequest):
-    import ipdb
-    ipdb.set_trace()
     if request.user.is_authenticated:
         # get token by user
         user_token = UserToken.objects.filter(
@@ -144,6 +146,51 @@ def logout_view(request: HttpRequest):
         messages.success(request, "شما با موفقیت از حساب خود خارج شدید")
         return redirect("auth_app:login")
     else:
-        return redirect("auth_app:login") # TODO, redirect to home page
+        return redirect("auth_app:login")
 
 
+class CivilRegistryView(LoginRequiredMixin, View):
+    template_name = "auth_app/civil_registry/civil_registry.html"
+    form = CivilRegistry
+
+    def get(self, request: HttpRequest):
+        form = self.form()
+        return render(request, self.template_name, {"form": form})
+
+    def post(self, request: HttpRequest):
+        import ipdb
+        ipdb.set_trace()
+        form = self.form(request.POST)
+        context_data = {"form": form}
+
+        if form.is_valid():
+            birth_day = form.cleaned_data['birth_day']
+            national_id = form.cleaned_data['national_id']
+
+            try:
+                # get token
+                access_token = UserToken.objects.filter(
+                    user_id=request.user.id
+                ).only(
+                    "access_token",
+                ).last().access_token
+
+                # send request into api
+                auth = AuthService()
+                birth_day = str(birth_day).split("-")
+                birth_day = '/'.join(birth_day)
+                result = auth.civil_registry(birth_day, national_id, access_token)
+
+                # return data into template
+                if result['Success']:
+                    context_data["data"] = result['Result']
+                    context_data["is_error"] = False
+                    return render(request, self.template_name, context_data)
+                else:
+                    context_data["data"] = result['Error']
+                    context_data["is_error"] = True
+                    return render(request, self.template_name, context_data)
+            except Exception as e:
+                context_data["data"] = e
+                context_data["is_error"] = True
+        return render(request, self.template_name, {"form": form})

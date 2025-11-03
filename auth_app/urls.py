@@ -3,7 +3,8 @@ from .views import (
     RequestPhoneView,
     VerifyRequestPhoneView,
     logout_view,
-    ProfileView
+    ProfileView,
+    CivilRegistryView
 )
 
 app_name = "auth_app"
@@ -13,4 +14,5 @@ urlpatterns = [
     path("verify_phone/", VerifyRequestPhoneView.as_view(), name="verify"),
     path("logout_user/", logout_view, name="logout"),
     path("profile_detail/", ProfileView.as_view(), name="profile_detail"),
+    path("civil_registry/", CivilRegistryView.as_view(), name="civil_registry"),
 ]
