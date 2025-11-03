@@ -158,8 +158,6 @@ class CivilRegistryView(LoginRequiredMixin, View):
         return render(request, self.template_name, {"form": form})
 
     def post(self, request: HttpRequest):
-        import ipdb
-        ipdb.set_trace()
         form = self.form(request.POST)
         context_data = {"form": form}
 
@@ -194,3 +192,4 @@ class CivilRegistryView(LoginRequiredMixin, View):
                 context_data["data"] = e
                 context_data["is_error"] = True
         return render(request, self.template_name, {"form": form})
+
