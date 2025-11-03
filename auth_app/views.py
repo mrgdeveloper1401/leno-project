@@ -113,10 +113,12 @@ class ProfileView(LoginRequiredMixin, View):
 
         if response_success == "True" or response_success is True:
             context_data["data"] = response['Result']
+            context_data["is_error"] = False
             return render(request, self.template_name, context_data)
         else:
             error_response = response['Error']
             context_data["data"] = error_response
+            context_data["is_error"] = True
             return render(request, self.template_name, context_data)
 
 def logout_view(request: HttpRequest):
