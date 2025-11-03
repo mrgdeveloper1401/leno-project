@@ -1,10 +1,15 @@
+from datetime import timedelta
+
 from django.contrib import messages
 from django.contrib.auth import login as auth_login, logout as auth_logout
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest
 from django.shortcuts import render, redirect
+from django.utils.crypto import get_random_string
 from django.views import View
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 from auth_app.clasess import AuthService
 from auth_app.clasess.profile import ProfileService
@@ -17,15 +22,17 @@ from auth_app.forms import (
 
 
 class RequestPhoneView(View):
+    template_name = "auth_app/login/auth-signup-login.html"
+    form_class = RequestPhoneForm
+
     def get(self, request: HttpRequest):
         # if request.user.is_authenticated:
         #     return redirect('auth_app:profile')
-
-        form = RequestPhoneForm()
-        return render(request, "auth_app/login/auth-signup-login.html", {"form": form})
+        form = self.form_class()
+        return render(request, self.template_name, {"form": form})
 
     def post(self, request: HttpRequest):
-        form = RequestPhoneForm(request.POST)
+        form = self.form_class(request.POST)
         if form.is_valid():
             phone = form.cleaned_data['phone']
 
@@ -41,19 +48,22 @@ class RequestPhoneView(View):
             else:
                 messages.error(request, result['Error'])
 
-        return render(request, "auth_app/auth-signup-login.html", {"form": form})
+        return render(request, self.template_name, {"form": form})
 
 
 class VerifyRequestPhoneView(View):
+    template_name = "auth_app/login/auth-signup-login-verify.html"
+    form_class = VerifyRequestPhoneForm
+
     def get(self, request: HttpRequest):
         phone = request.session.get('phone')
         if phone is None:
             return redirect('auth_app:login')
-        form = VerifyRequestPhoneForm()
-        return render(request, "auth_app/login/auth-signup-login-verify.html", {"form": form})
+        form = self.form_class()
+        return render(request, self.template_name, {"form": form})
 
     def post(self, request: HttpRequest):
-        form = VerifyRequestPhoneForm(request.POST)
+        form = self.form_class(request.POST)
         if form.is_valid():
             phone = request.session['phone']
             code = form.cleaned_data['code']
@@ -62,7 +72,9 @@ class VerifyRequestPhoneView(View):
             result = verify_service.verify_code(phone, code) # verify otp code
             if result['Success']:
                 # create user
-                user, created = User.objects.get_or_create(username=phone) # create or get user
+                random_password = get_random_string(16)
+                hashed_password = make_password(random_password)
+                user, created = User.objects.get_or_create(username=phone, password=hashed_password) # create or get user
 
                 # save token in database
                 res = result['Result']
@@ -80,12 +92,12 @@ class VerifyRequestPhoneView(View):
                 self._clean_verification_session(request)
 
                 messages.success(request, "احراز هویت با موفقیت انجام شد")
-                return redirect('auth_app:login')
+                return redirect('auth_app:login') # TODO, redirect user profile
 
             else:
                 messages.error(request, result['Error'])
 
-        return render(request, "auth_app/auth-signup-login-verify.html", {"form": form})
+        return render(request, self.template_name, {"form": form})
 
 
     def _clean_verification_session(self, request):
