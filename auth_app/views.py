@@ -118,3 +118,4 @@ def logout_view(request: HttpRequest):
         return redirect("auth_app:login")
     else:
         return redirect("auth_app:login") # TODO, redirect to home page
+
