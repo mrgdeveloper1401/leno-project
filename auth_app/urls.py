@@ -4,7 +4,9 @@ from .views import (
     VerifyRequestPhoneView,
     logout_view,
     ProfileView,
-    CivilRegistryView
+    CivilRegistryView,
+    LogOutTemplateView,
+    TestHomeTemplateView,
 )
 
 app_name = "auth_app"
@@ -15,4 +17,6 @@ urlpatterns = [
     path("logout_user/", logout_view, name="logout"),
     path("profile_detail/", ProfileView.as_view(), name="profile_detail"),
     path("civil_registry/", CivilRegistryView.as_view(), name="civil_registry"),
+    path("logout_template/", LogOutTemplateView.as_view(), name="logout_template"),
+    path("test_home/", TestHomeTemplateView.as_view(), name="test_home"),
 ]

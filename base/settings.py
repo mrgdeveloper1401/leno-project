@@ -1,5 +1,6 @@
 from pathlib import Path
 from decouple import config, Csv
+from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,7 +30,10 @@ INSTALLED_APPS = [
 
     # third party app
     "auth_app.apps.AuthAppConfig",
+
     # third party package
+    "django_celery_results",
+    "django_celery_beat"
 
 ]
 
@@ -187,16 +191,9 @@ else:
     CACHES['default']['LOCATION'] = config("PRODU_REDIS_LOCATION")
 
 
-# config celery
-
-
 # config package corsheaders
 if DEBUG is False:
     CORS_ALLOWED_ORIGINS = config("PRODUCTION_CORS_ALLOWED_ORIGINS", cast=Csv())
-
-
-# coustom auth user
-# AUTH_USER_MODEL = "auth_app.User"
 
 # config session cache
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
@@ -204,3 +201,23 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 # login conf
 # if user not authenticate redirect into route login
 LOGIN_URL = "/auth/request_phone/"
+
+# celery config
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_ACKS_LATE = True
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 300
+CELERY_CACHE_BACKEND = 'default'
+CELERY_RESULT_BACKEND = 'django-db'
+if DEBUG:
+    CELERY_BROKER_URL = "redis://localhost:6381/2"
+    # CELERY_RESULT_BACKEND = "redis://localhost:6381/3"
+else:
+    CELERY_BROKER_URL = config("CELERY_BROKER_URL", cast=str)
+    # CELERY_RESULT_BACKEND = config("CELERY_RESULT_BACKEND", cast=str)
+
+# config celery beat
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"

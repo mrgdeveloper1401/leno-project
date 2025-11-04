@@ -30,3 +30,9 @@ django-cors-headers==4.9.0
 
 # shamsi date
 jdatetime==5.2.0
+
+# background task
+celery==5.5.3
+
+# celery result task
+django-celery-results==2.6.0
