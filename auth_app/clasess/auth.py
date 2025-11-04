@@ -9,6 +9,7 @@ class AuthService:
         self.VERIFY_URL = self.AUTH_BASE_URL + '/api/v1/jwt/create/'
         self.LOGOUT_URL = self.AUTH_BASE_URL + '/api/v1/user/logout/'
         self.CIVILREGISTRY = self.AUTH_BASE_URL + '/api/v1/kyc/civilregistry/'
+        self.REFRESH_TOKEN = self.AUTH_BASE_URL + '/api/v1/jwt/refresh/'
         self.API_KEY = config('API_KEY', cast=str)
         self.headers = {'Content-Type': 'application/json', "Api-Key": self.API_KEY}
 
@@ -56,4 +57,12 @@ class AuthService:
         }
         self.headers['Authorization'] = 'Bearer ' + access_token
         response = requests.post(self.CIVILREGISTRY, json=request_body, headers=self.headers, timeout=20)
+        return response.json()
+
+    def rotate_token(self, access_token, refresh_token):
+        request_body = {
+            "refresh_token": refresh_token,
+        }
+        self.headers['Authorization'] = 'Bearer ' + access_token
+        response = requests.post(self.REFRESH_TOKEN, json=request_body, headers=self.headers, timeout=20)
         return response.json()
