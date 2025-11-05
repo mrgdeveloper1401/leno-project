@@ -228,3 +228,20 @@ CELERY_TASK_QUEUES = {
     Queue("refresh_token"),
     Queue("logout_user")
 }
+
+if config("USER_WHITENOISE", cast=bool, default=True):
+    MIDDLEWARE += [
+        "whitenoise.middleware.WhiteNoiseMiddleware"
+    ]
+
+# config storages
+STORAGES = {
+    'default':
+        {
+            'BACKEND': config("STORAGE_BACKEND", cast=str, default='django.core.files.storage.FileSystemStorage'),
+        },
+    'staticfiles':
+        {
+            'BACKEND': config("STORAGE_STATIC_FILES", cast=str, default='whitenoise.storage.CompressedManifestStaticFilesStorage'),
+        }
+}

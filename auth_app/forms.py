@@ -35,4 +35,12 @@ class CivilRegistry(forms.Form):
         ),
         input_formats=['%Y/%m/%d']
     )
-    national_id = forms.CharField()
+    national_id = forms.CharField(
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "1234567890",
+                "type": "number"
+            }
+        )
+    )

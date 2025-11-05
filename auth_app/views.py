@@ -178,8 +178,6 @@ class LogOutTemplateView(TemplateView):
     template_name = "auth_app/logout/auth-logout.html"
 
     def dispatch(self, request, *args, **kwargs):
-        import ipdb
-        ipdb.set_trace()
         if request.user.is_authenticated:
 
             # get token
@@ -197,15 +195,22 @@ class LogOutTemplateView(TemplateView):
         return super().dispatch(request, *args, **kwargs)
 
 
-class CivilRegistryView(LoginRequiredMixin, View):
-    template_name = "auth_app/civil_registry/civil_registry.html"
+class CivilRegistryView(View):
+    template_name = "auth_app/civil_registry/auth-registry.html"
     form = CivilRegistry
 
-    def get(self, request: HttpRequest):
+    async def get(self, request: HttpRequest):
+        # check user authenticate
+        user = await request.auser()
+        if not user.is_authenticated:
+            return redirect("auth_app:login")
+
         form = self.form()
         return render(request, self.template_name, {"form": form})
 
-    def post(self, request: HttpRequest):
+    async def post(self, request: HttpRequest):
+        # import ipdb
+        # ipdb.set_trace()
         form = self.form(request.POST)
         context_data = {"form": form}
 
@@ -214,32 +219,38 @@ class CivilRegistryView(LoginRequiredMixin, View):
             national_id = form.cleaned_data['national_id']
 
             try:
-                # get token
-                access_token = UserToken.objects.filter(
-                    user_id=request.user.id
+                # get user by request
+                user = await request.auser()
+                user_id = user.id
+
+                # get token by user authenticate
+                user_token = await UserToken.objects.filter(
+                    user_id=user_id
                 ).only(
                     "access_token",
-                ).last().access_token
+                ).alast()
 
-                if access_token:
-                    # send request into api
-                    auth = AuthService()
-                    birth_day = str(birth_day).split("-")
-                    birth_day = '/'.join(birth_day)
-                    result = auth.civil_registry(birth_day, national_id, access_token)
+                if not user_token:
+                    messages.error(request, "کاربر گرامی لطفا برای احراز هویت مجددا لاگین کنید")
+                    return render(request, self.template_name, context_data)
 
-                    # return data into template
-                    if result['Success']:
-                        context_data["data"] = result['Result']
-                        context_data["is_error"] = False
-                        return render(request, self.template_name, context_data)
-                    else:
-                        context_data["data"] = result['Error']
-                        context_data["is_error"] = True
-                        return render(request, self.template_name, context_data)
-                return render(request, self.template_name, context_data)
+                access_token = user_token.access_token
+                # send request into api
+                auth = AuthService()
+                birth_day = str(birth_day).split("-")
+                birth_day = '/'.join(birth_day)
+                result = await auth.civil_registry(birth_day, national_id, access_token)
 
-            except Exception as e:
+                # return data into template
+                if result['Success']:
+                    context_data["data"] = result['Result']
+                    context_data["is_error"] = False
+                    return render(request, self.template_name, context_data)
+                else:
+                    context_data["data"] = result['Error']
+                    context_data["is_error"] = True
+                    return render(request, self.template_name, context_data)
+            except httpx.TimeoutException as e:
                 context_data["data"] = e
                 context_data["is_error"] = True
         return render(request, self.template_name, {"form": form})

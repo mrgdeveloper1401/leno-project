@@ -1120,33 +1120,33 @@
                                       aria-expanded="false"
                                       aria-controls="sidebarSignIn"
                                       data-key="t-signin"
-                                      >وارد شوید</a
+                                      >حساب کاربری</a
                                     >
                                     <div
                                       class="collapse menu-dropdown"
                                       id="sidebarSignIn"
                                     >
                                       <ul class="nav nav-sm flex-column">
-                                        <li class="nav-item">
+                                        <!-- <li class="nav-item">
                                           <a
                                             href="auth-signin-basic.html"
                                             class="nav-link"
                                             data-key="t-basic"
                                             >اساسی</a
                                           >
-                                        </li>
+                                        </li> -->
                                         <li class="nav-item">
                                           <a
-                                            href="auth-signin-cover.html"
+                                            href="{% url 'auth_app:login' %}"
                                             class="nav-link"
                                             data-key="t-cover"
-                                            >پوشش</a
+                                            >ورود یا ثبت نام</a
                                           >
                                         </li>
                                       </ul>
                                     </div>
                                   </li>
-                                  <li class="nav-item">
+                                  <!-- <li class="nav-item">
                                     <a
                                       href="#sidebarSignUp"
                                       class="nav-link collapsed"
@@ -1180,8 +1180,9 @@
                                         </li>
                                       </ul>
                                     </div>
-                                  </li>
+                                  </li> -->
                                   {% endif %}
+                                  {% if request.user.is_authenticated %}
                                   <li class="nav-item">
                                     <a
                                       href="#sidebarResetPass"
@@ -1193,6 +1194,7 @@
                                       data-key="t-password-reset"
                                       >بازنشانی رمز عبور</a
                                     >
+                                    {% endif %}
                                     <div
                                       class="collapse menu-dropdown"
                                       id="sidebarResetPass"
@@ -1217,7 +1219,7 @@
                                       </ul>
                                     </div>
                                   </li>
-
+                                  {% if  request.user.is_authenticated %}
                                   <li class="nav-item">
                                     <a
                                       href="#sidebarchangePass"
@@ -1229,6 +1231,7 @@
                                       data-key="t-password-create"
                                       >ایجاد رمز عبور</a
                                     >
+                                  {% endif %}
                                     <div
                                       class="collapse menu-dropdown"
                                       id="sidebarchangePass"
@@ -1289,7 +1292,7 @@
                                       </ul>
                                     </div>
                                   </li>
-
+                                  {% if request.user.is_authenticated %}
                                   <li class="nav-item">
                                     <a
                                       href="#sidebarLogout"
@@ -1301,6 +1304,7 @@
                                       data-key="t-logout"
                                       >خروج از سیستم</a
                                     >
+                                    {% endif %}
                                     <div
                                       class="collapse menu-dropdown"
                                       id="sidebarLogout"
@@ -1360,6 +1364,7 @@
                                       </ul>
                                     </div>
                                   </li>
+                                  {% if request.user.is_authenticated %}
                                   <li class="nav-item">
                                     <a
                                       href="#sidebarTwoStep"
@@ -1371,25 +1376,26 @@
                                       data-key="t-two-step-verification"
                                       >تایید دو مرحله ای</a
                                     >
+                                    {% endif %}
                                     <div
                                       class="collapse menu-dropdown"
                                       id="sidebarTwoStep"
                                     >
                                       <ul class="nav nav-sm flex-column">
-                                        <li class="nav-item">
+                                        <!-- <li class="nav-item">
                                           <a
                                             href="auth-twostep-basic.html"
                                             class="nav-link"
                                             data-key="t-basic"
                                             >اساسی</a
                                           >
-                                        </li>
+                                        </li> -->
                                         <li class="nav-item">
                                           <a
-                                            href="auth-twostep-cover.html"
+                                            href="{% url 'auth_app:civil_registry' %}"
                                             class="nav-link"
                                             data-key="t-cover"
-                                            >پوشش</a
+                                            >درخواست احراز هویت</a
                                           >
                                         </li>
                                       </ul>
