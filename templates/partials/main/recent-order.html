@@ -1,0 +1,224 @@
+{% load static %}
+<div class="col-xl-8">
+  <div class="card">
+    <div class="card-header align-items-center d-flex">
+      <h4 class="card-title mb-0 flex-grow-1">سفارشات اخیر</h4>
+      <div class="flex-shrink-0">
+        <button type="button" class="btn btn-soft-primary btn-sm">
+          <i class="ri-file-list-3-line align-middle"></i>ایجاد گزارش
+        </button>
+      </div>
+    </div>
+    <!-- end card header -->
+
+    <div class="card-body">
+      <div class="table-responsive table-card">
+        <table
+          class="table table-borderless table-centered align-middle table-nowrap mb-0"
+        >
+          <thead class="text-muted table-light">
+            <tr>
+              <th scope="col">شناسه سفارش</th>
+              <th scope="col">مشتری</th>
+              <th scope="col">محصول</th>
+              <th scope="col">مقدار</th>
+              <th scope="col">فروشنده</th>
+              <th scope="col">وضعیت</th>
+              <th scope="col">رتبه بندی</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <a
+                  href="apps-ecommerce-order-details.html"
+                  class="fw-medium link-primary"
+                  >#VZ2112</a
+                >
+              </td>
+              <td>
+                <div class="d-flex align-items-center">
+                  <div class="flex-shrink-0 me-2">
+                    <img
+                      src='{% static "minimal/assets/images/users/avatar-1.jpg" %}'
+                      alt=""
+                      class="avatar-xs rounded-circle"
+                    />
+                  </div>
+                  <div class="flex-grow-1">الکس اسمیت</div>
+                </div>
+              </td>
+              <td>لباس</td>
+              <td>
+                <span class="text-success">109.00 دلار</span>
+              </td>
+              <td>مد زئوتیک</td>
+              <td>
+                <span class="badge bg-success-subtle text-success"
+                  >پرداخت شده است</span
+                >
+              </td>
+              <td>
+                <h5 class="fs-14 fw-medium mb-0">
+                  5.0<span class="text-muted fs-11 ms-1">(61 رای)</span>
+                </h5>
+              </td>
+            </tr>
+            <!-- end tr -->
+            <tr>
+              <td>
+                <a
+                  href="apps-ecommerce-order-details.html"
+                  class="fw-medium link-primary"
+                  >#VZ2111</a
+                >
+              </td>
+              <td>
+                <div class="d-flex align-items-center">
+                  <div class="flex-shrink-0 me-2">
+                    <img
+                      src='{% static "minimal/assets/images/users/avatar-2.jpg" %}'
+                      alt=""
+                      class="avatar-xs rounded-circle"
+                    />
+                  </div>
+                  <div class="flex-grow-1">جانش براون</div>
+                </div>
+              </td>
+              <td>انباری آشپزخانه</td>
+              <td>
+                <span class="text-success">149.00 دلار</span>
+              </td>
+              <td>طراحی میکرو</td>
+              <td>
+                <span class="badge bg-warning-subtle text-warning"
+                  >در انتظار</span
+                >
+              </td>
+              <td>
+                <h5 class="fs-14 fw-medium mb-0">
+                  4.5<span class="text-muted fs-11 ms-1">(61 رای)</span>
+                </h5>
+              </td>
+            </tr>
+            <!-- end tr -->
+            <tr>
+              <td>
+                <a
+                  href="apps-ecommerce-order-details.html"
+                  class="fw-medium link-primary"
+                  >#VZ2109</a
+                >
+              </td>
+              <td>
+                <div class="d-flex align-items-center">
+                  <div class="flex-shrink-0 me-2">
+                    <img
+                      src='{% static "minimal/assets/images/users/avatar-3.jpg" %}'
+                      alt=""
+                      class="avatar-xs rounded-circle"
+                    />
+                  </div>
+                  <div class="flex-grow-1">آیان بوون</div>
+                </div>
+              </td>
+              <td>لوازم جانبی دوچرخه</td>
+              <td>
+                <span class="text-success">215.00 دلار</span>
+              </td>
+              <td>فن آوری های نستا</td>
+              <td>
+                <span class="badge bg-success-subtle text-success"
+                  >پرداخت شده است</span
+                >
+              </td>
+              <td>
+                <h5 class="fs-14 fw-medium mb-0">
+                  4.9<span class="text-muted fs-11 ms-1">(89 رای)</span>
+                </h5>
+              </td>
+            </tr>
+            <!-- end tr -->
+            <tr>
+              <td>
+                <a
+                  href="apps-ecommerce-order-details.html"
+                  class="fw-medium link-primary"
+                  >#VZ2108</a
+                >
+              </td>
+              <td>
+                <div class="d-flex align-items-center">
+                  <div class="flex-shrink-0 me-2">
+                    <img
+                      src={% static "minimal/assets/images/users/avatar-4.jpg" %}
+                      alt=""
+                      class="avatar-xs rounded-circle"
+                    />
+                  </div>
+                  <div class="flex-grow-1">پرزی مارک</div>
+                </div>
+              </td>
+              <td>مبلمان</td>
+              <td>
+                <span class="text-success">199.00 دلار</span>
+              </td>
+              <td>Syntyce Solutions</td>
+              <td>
+                <span class="badge bg-danger-subtle text-danger"
+                  >پرداخت نشده</span
+                >
+              </td>
+              <td>
+                <h5 class="fs-14 fw-medium mb-0">
+                  4.3<span class="text-muted fs-11 ms-1">(47 رای)</span>
+                </h5>
+              </td>
+            </tr>
+            <!-- end tr -->
+            <tr>
+              <td>
+                <a
+                  href="apps-ecommerce-order-details.html"
+                  class="fw-medium link-primary"
+                  >#VZ2107</a
+                >
+              </td>
+              <td>
+                <div class="d-flex align-items-center">
+                  <div class="flex-shrink-0 me-2">
+                    <img
+                      src={% static "minimal/assets/images/users/avatar-6.jpg" %}
+                      alt=""
+                      class="avatar-xs rounded-circle"
+                    />
+                  </div>
+                  <div class="flex-grow-1">از هدی متنفر باش</div>
+                </div>
+              </td>
+              <td>کیف و کیف پول</td>
+              <td>
+                <span class="text-success">330.00 دلار</span>
+              </td>
+              <td>کارخانه آی تست</td>
+              <td>
+                <span class="badge bg-success-subtle text-success"
+                  >پرداخت شده است</span
+                >
+              </td>
+              <td>
+                <h5 class="fs-14 fw-medium mb-0">
+                  4.7<span class="text-muted fs-11 ms-1">(161 رای)</span>
+                </h5>
+              </td>
+            </tr>
+            <!-- end tr -->
+          </tbody>
+          <!-- end tbody -->
+        </table>
+        <!-- end table -->
+      </div>
+    </div>
+  </div>
+  <!-- .card-->
+</div>

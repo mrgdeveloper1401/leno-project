@@ -18,6 +18,7 @@ from auth_app.forms import (
     CivilRegistry
 )
 from base.utils.mixin import RedirectAuthenticatedUserMixin
+from auth_app.tasks import task_logout_user
 
 
 class RequestPhoneView(RedirectAuthenticatedUserMixin, View):
@@ -150,10 +151,9 @@ def logout_view(request: HttpRequest):
 
         if user_token:
             auth = AuthService()
-            auth.logout(
-                access_token=user_token.access_token,
-                refresh_token=user_token.refresh_token
-            )
+            access_token=user_token.access_token
+            refresh_token=user_token.refresh_token
+            task_logout_user.delay(access_token, refresh_token)
 
         auth_logout(request)
         messages.success(request, "شما با موفقیت از حساب خود خارج شدید")
@@ -232,5 +232,13 @@ class CivilRegistryView(LoginRequiredMixin, View):
         return render(request, self.template_name, {"form": form})
 
 
-class TestHomeTemplateView(TemplateView):
-    template_name = "auth_app/home/test_home.html"
+# class TestHomeTemplateView(TemplateView):
+#     template_name = "auth_app/home/test_home.html"
+
+
+# class ProfileTemplateView(TemplateView):
+#     template_name = "auth_app/profile/auth-profile.html"
+
+
+# class DashboardHomeView(TemplateView):
+#     template_name = "partials/main/main.html"

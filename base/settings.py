@@ -1,10 +1,10 @@
+import os
 from pathlib import Path
 from decouple import config, Csv
-from celery.schedules import crontab
+from kombu import Queue
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -212,6 +212,7 @@ CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 300
 CELERY_CACHE_BACKEND = 'default'
 CELERY_RESULT_BACKEND = 'django-db'
+CELERY_WORKER_CONCURRENCY = os.cpu_count()
 if DEBUG:
     CELERY_BROKER_URL = "redis://localhost:6381/2"
     # CELERY_RESULT_BACKEND = "redis://localhost:6381/3"
@@ -221,3 +222,9 @@ else:
 
 # config celery beat
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+
+# celery queue
+CELERY_TASK_QUEUES = {
+    Queue("refresh_token"),
+    Queue("logout_user")
+}

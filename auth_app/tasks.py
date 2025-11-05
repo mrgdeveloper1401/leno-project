@@ -1,42 +1,60 @@
+import asyncio
 import time
 from celery import shared_task
 from auth_app.clasess import AuthService
 from auth_app.models import UserToken
 
 
-@shared_task
+@shared_task(queue="refresh_token", max_retries=3)
 def refresh_expiring_tokens():
     now_ts = int(time.time())
     expired_now_ts = now_ts + 30 * 60
 
-    user_token = UserToken.objects.filter(
-        expire_in_timestamp__lte=expired_now_ts
-    )
+    user_tokens = UserToken.objects.filter(expire_in_timestamp__lte=expired_now_ts)
 
-    # auth
+    if not user_tokens:
+        return
+
     auth = AuthService()
 
-    for i in user_token:
-        try:
-            # send request into api
-            response = auth.rotate_token(i.access_token, i.refresh_token)
+    async def process_tokens():
+        tasks = []
 
-            # check response
+        async def refresh_single_token(token_obj):
+            response = await auth.rotate_token(token_obj.access_token, token_obj.refresh_token)
+
             if str(response.get("Success")).lower() == "true":
+                result = response['Result']
+                new_access = result['access_token']
+                new_refresh = result['refresh_token']
+                new_expire = int(result['user']['expire_in_timestamp'])
 
-                # get information on response
-                access_token = response['Result']['access_token']
-                refresh_token = response['Result']['refresh_token']
-                expire_in_timestamp = int(response['Result']['user']['expire_in_timestamp'])
-
-                # update information
-                UserToken.objects.filter(
-                    user_id=i.user.id
-                ).update(
-                    access_token=access_token,
-                    refresh_token=refresh_token,
-                    expire_in_timestamp=expire_in_timestamp,
+                UserToken.objects.filter(user_id=token_obj.user.id).update(
+                    access_token=new_access,
+                    refresh_token=new_refresh,
+                    expire_in_timestamp=new_expire,
                 )
-        except Exception as e:
-            print(f"Failed to refresh token for user {i.user.id}: {e}")
-            continue
+
+        # create list for coroutine
+        for i in user_tokens:
+            tasks.append(refresh_single_token(i))
+
+        # run task
+        await asyncio.gather(*tasks)
+
+    asyncio.run(process_tokens())
+
+
+import asyncio
+from celery import shared_task
+from auth_app.clasess import AuthService
+
+
+@shared_task(queue="logout_user", max_retries=3)
+def task_logout_user(access_token: str, refresh_token: str):
+    auth = AuthService()
+
+    async def logout_async():
+        await auth.logout(access_token, refresh_token)
+
+    asyncio.run(logout_async())

@@ -1,19 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-{% if is_error %}
-        <h1 class="error alert alert-danger">{{ data }}</h1>
-    {% else %}
-    {% for key, value in data.items %}
-        <div class="row">
-            <div class="col-md-3"><strong>{{ key }}:</strong></div>
-            <div class="col-md-9">{{ value }}</div>
-        </div>
-    {% endfor %}
-{% endif %}
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+    <title>مشخصات من</title>
+{% endblock %}
+
+{% block content %}
+
+{% endblock %}

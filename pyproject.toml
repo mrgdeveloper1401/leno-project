@@ -29,4 +29,5 @@ dev = [
     "eventlet>=0.40.3",
     "flower>=2.0.1",
     "ipdb>=0.13.13",
+    "psutil>=7.1.3",
 ]

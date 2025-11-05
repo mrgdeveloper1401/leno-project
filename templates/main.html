@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    <title>صفحه اصلی</title>
+{% endblock title %}
+
+{% block content %}
+    <div class='layout-wrapper'>
+        {% include "partials/header/partial-header.html" %}
+        {% include "partials/dashboard/dashboard.html" %}
+        {% include "partials/main/main-content.html" %}
+    </div>
+{% endblock content %}

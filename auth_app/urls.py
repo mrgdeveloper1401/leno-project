@@ -6,7 +6,8 @@ from .views import (
     ProfileView,
     CivilRegistryView,
     LogOutTemplateView,
-    TestHomeTemplateView,
+    # TestHomeTemplateView,
+    # ProfileTemplateView,
 )
 
 app_name = "auth_app"
@@ -18,5 +19,6 @@ urlpatterns = [
     path("profile_detail/", ProfileView.as_view(), name="profile_detail"),
     path("civil_registry/", CivilRegistryView.as_view(), name="civil_registry"),
     path("logout_template/", LogOutTemplateView.as_view(), name="logout_template"),
-    path("test_home/", TestHomeTemplateView.as_view(), name="test_home"),
+    # path("test-template-profile-detail/", ProfileTemplateView.as_view(), name="profile_detail"),
+    # path("test_home/", TestHomeTemplateView.as_view(), name="test_home"),
 ]
