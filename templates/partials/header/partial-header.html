@@ -463,7 +463,9 @@
                         </button>
                         <div class="dropdown-menu dropdown-menu-end">
                             <!-- item-->
-                            <h6 class="dropdown-header">خوش آمدی آنا!</h6>
+                            {% if request.user.is_authenticated %}
+                            <h6 class="dropdown-header">خوش آمدی {{ request.user.username }}</h6>
+                            {% endif %}
                             <a class="dropdown-item" href="pages-profile.html"><i class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i> <span class="align-middle">نمایه</span></a>
                             <a class="dropdown-item" href="apps-chat.html"><i class="mdi mdi-message-text-outline text-muted fs-16 align-middle me-1"></i> <span class="align-middle">پیام ها</span></a>
                             <a class="dropdown-item" href="apps-tasks-kanban.html"><i class="mdi mdi-calendar-check-outline text-muted fs-16 align-middle me-1"></i> <span class="align-middle">تابلوی وظیفه</span></a>
