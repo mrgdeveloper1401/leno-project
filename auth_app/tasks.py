@@ -12,9 +12,8 @@ def refresh_expiring_tokens():
 
     user_tokens = UserToken.objects.filter(
         expire_in_timestamp__lte=expired_now_ts
-    ).select_related('user')
-    # user_tokens = UserToken.objects.select_related('user')
-
+    )
+    # user_tokens = UserToken.objects.all()
     if not user_tokens:
         return
 
