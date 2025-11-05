@@ -17,10 +17,10 @@ class AuthService:
         }
 
     async def _post(self, url: str, json: dict, headers: dict = None, timeout: int = 20):
-        merged_headers = {**self.base_headers, **(headers or {})}
+        merged_headers = {**self.base_headers}
         async with httpx.AsyncClient(timeout=timeout) as client:
             response = await client.post(url, json=json, headers=merged_headers)
-            response.raise_for_status()
+            # response.raise_for_status()
             return response.json()
 
     async def send_login_request(self, phone: str):

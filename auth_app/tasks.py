@@ -53,13 +53,3 @@ def task_logout_user(access_token: str, refresh_token: str):
         await auth.logout(access_token, refresh_token)
 
     asyncio.run(logout_async())
-
-
-@shared_task(queue="login_user", max_retries=3)
-def task_send_login_request(phone: str):
-
-    async def async_request():
-        login_service = AuthService()
-        result = await login_service.send_login_request(phone)
-        return result
-    asyncio.run(async_request())

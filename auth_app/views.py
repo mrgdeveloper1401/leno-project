@@ -1,9 +1,12 @@
+import httpx
+from asgiref.sync import sync_to_async
 from django.contrib import messages
-from django.contrib.auth import login as auth_login, logout as auth_logout
+from django.contrib.auth import alogin, logout as auth_logout, login
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest
 from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
 from django.utils.crypto import get_random_string
 from django.views import View
 from django.contrib.auth.models import User
@@ -18,33 +21,35 @@ from auth_app.forms import (
     CivilRegistry
 )
 from base.utils.mixin import RedirectAuthenticatedUserMixin
-from auth_app.tasks import task_logout_user, task_send_login_request
+from auth_app.tasks import task_logout_user
 
 
 class RequestPhoneView(RedirectAuthenticatedUserMixin, View):
     template_name = "auth_app/login/auth-signup-login.html"
     form_class = RequestPhoneForm
 
-    def get(self, request: HttpRequest):
+    async def get(self, request: HttpRequest):
         form = self.form_class()
         return render(request, self.template_name, {"form": form})
 
-    def post(self, request: HttpRequest):
+    async def post(self, request: HttpRequest):
         form = self.form_class(request.POST)
         if form.is_valid():
             phone = form.cleaned_data['phone']
 
-            result = task_send_login_request.delay(phone)
+            try:
+                auth = AuthService()
+                result = await auth.send_login_request(phone)
+                if result['Success']:
+                    request.session['phone'] = phone
 
-            if result['Success']:
-                request.session['phone'] = phone
-
-                display_message =  "کد تأیید به شماره شما ارسال شد"
-                messages.success(request, display_message)
-                return redirect("auth_app:verify")
-            else:
-                messages.error(request, result['Error'])
-
+                    display_message =  "کد تأیید به شماره شما ارسال شد"
+                    messages.success(request, display_message)
+                    return redirect("auth_app:verify")
+                else:
+                    messages.error(request, result['Error'])
+            except httpx.TimeoutException:
+                messages.error(request, "درخواست به سرور احراز هویت Timeout شد. لطفاً دوباره تلاش کنید.")
         return render(request, self.template_name, {"form": form})
 
 
@@ -52,51 +57,55 @@ class VerifyRequestPhoneView(RedirectAuthenticatedUserMixin, View):
     template_name = "auth_app/login/auth-signup-login-verify.html"
     form_class = VerifyRequestPhoneForm
 
-    def get(self, request: HttpRequest):
+    async def get(self, request: HttpRequest):
         phone = request.session.get('phone')
         if phone is None:
             return redirect('auth_app:login')
         form = self.form_class()
         return render(request, self.template_name, {"form": form})
 
-    def post(self, request: HttpRequest):
+    async def post(self, request: HttpRequest):
+        import ipdb
+        ipdb.set_trace()
         form = self.form_class(request.POST)
         if form.is_valid():
             phone = request.session['phone']
             code = form.cleaned_data['code']
 
-            verify_service = AuthService()
-            result = verify_service.verify_code(phone, code) # verify otp code
-            if result['Success']:
-                # create user
-                random_password = get_random_string(16)
-                hashed_password = make_password(random_password)
-                user = User.objects.filter(username=phone).only("id") # check user
-                if not user.exists():
-                    User.objects.create_user(username=phone, password=hashed_password, email=None)
+            try:
+                verify_service = AuthService()
+                result = await verify_service.verify_code(phone, code) # verify otp code
+                if result['Success']:
+                    # create user
+                    random_password = get_random_string(16)
+                    hashed_password = make_password(random_password)
+                    user =  await sync_to_async(User.objects.only("id").filter)(username=phone) # check user
+                    if not await user.aexists():
+                        User.objects.create_user(username=phone, password=hashed_password, email=None)
 
-                # save token in database
-                get_user = user.first()
-                res = result['Result']
-                UserToken.objects.create(
-                    user_id=get_user.id,
-                    access_token=res.get('access_token'),
-                    refresh_token=res.get('refresh_token'),
-                    expire_in_timestamp=res['user']['expire_in_timestamp']
-                )
+                    # save token in database
+                    get_user = await user.afirst()
+                    res = result['Result']
+                    await UserToken.objects.acreate(
+                        user_id=get_user.id,
+                        access_token=res.get('access_token'),
+                        refresh_token=res.get('refresh_token'),
+                        expire_in_timestamp=res['user']['expire_in_timestamp']
+                    )
 
-                # login user
-                auth_login(request, get_user)
+                    # login user
+                    await sync_to_async(login)(request, get_user)
 
-                # remove session
-                self._clean_verification_session(request)
+                    # remove session
+                    self._clean_verification_session(request)
 
-                messages.success(request, "احراز هویت با موفقیت انجام شد")
-                return redirect('auth_app:login') # TODO, redirect user profile
+                    messages.success(request, "احراز هویت با موفقیت انجام شد")
+                    return redirect("main_page")
 
-            else:
-                messages.error(request, result['Error'])
-
+                else:
+                    messages.error(request, result['Error'])
+            except httpx.TimeoutException:
+                messages.error(request, "درخواست به سرور احراز هویت Timeout شد. لطفاً دوباره تلاش کنید.")
         return render(request, self.template_name, {"form": form})
 
 
