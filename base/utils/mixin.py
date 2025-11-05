@@ -3,10 +3,11 @@ from django.shortcuts import redirect
 
 
 class RedirectAuthenticatedUserMixin(AccessMixin):
-    redirect_authenticated_to = "auth_app:test_home"
+    redirect_authenticated_to = "main_page"
 
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
+    async def dispatch(self, request, *args, **kwargs):
+        user = await request.auser()
+        if user.is_authenticated:
             redirect_to = self.get_redirect_authenticated_url()
             if redirect_to:
                 return redirect(redirect_to)
