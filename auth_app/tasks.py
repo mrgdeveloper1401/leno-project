@@ -1,10 +1,3 @@
-import asyncio
-import time
-from celery import shared_task
-from auth_app.clasess import AuthService
-from auth_app.models import UserToken
-
-
 import time
 import asyncio
 from celery import shared_task
