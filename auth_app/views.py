@@ -6,7 +6,6 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
 from django.utils.crypto import get_random_string
 from django.views import View
 from django.contrib.auth.models import User
@@ -20,15 +19,17 @@ from auth_app.forms import (
     VerifyRequestPhoneForm,
     CivilRegistry
 )
-from base.utils.mixin import RedirectAuthenticatedUserMixin
 from auth_app.tasks import task_logout_user
 
 
-class RequestPhoneView(RedirectAuthenticatedUserMixin, View):
+class RequestPhoneView(View):
     template_name = "auth_app/login/auth-signup-login.html"
     form_class = RequestPhoneForm
 
     async def get(self, request: HttpRequest):
+        user = await request.auser()
+        if user.is_authenticated:
+            return redirect("main_page")
         form = self.form_class()
         return render(request, self.template_name, {"form": form})
 
@@ -53,20 +54,23 @@ class RequestPhoneView(RedirectAuthenticatedUserMixin, View):
         return render(request, self.template_name, {"form": form})
 
 
-class VerifyRequestPhoneView(RedirectAuthenticatedUserMixin, View):
+class VerifyRequestPhoneView(View):
     template_name = "auth_app/login/auth-signup-login-verify.html"
     form_class = VerifyRequestPhoneForm
 
     async def get(self, request: HttpRequest):
+        user = await request.auser()
+        if user.is_authenticated:
+            return redirect("main_page")
+
         phone = request.session.get('phone')
         if phone is None:
             return redirect('auth_app:login')
+
         form = self.form_class()
         return render(request, self.template_name, {"form": form})
 
     async def post(self, request: HttpRequest):
-        import ipdb
-        ipdb.set_trace()
         form = self.form_class(request.POST)
         if form.is_valid():
             phone = request.session['phone']
@@ -174,8 +178,9 @@ class LogOutTemplateView(TemplateView):
     template_name = "auth_app/logout/auth-logout.html"
 
     def dispatch(self, request, *args, **kwargs):
+        import ipdb
+        ipdb.set_trace()
         if request.user.is_authenticated:
-            auth = AuthService()
 
             # get token
             user_token = UserToken.objects.filter(user_id=request.user.id).only(
@@ -185,7 +190,7 @@ class LogOutTemplateView(TemplateView):
 
             if user_token:
                 # send request into api for logout user
-                auth.logout(user_token.access_token, user_token.refresh_token)
+                task_logout_user.delay(user_token.access_token, user_token.access_token)
 
             # logout in django
             auth_logout(request)

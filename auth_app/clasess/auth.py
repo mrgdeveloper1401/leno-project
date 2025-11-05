@@ -13,13 +13,13 @@ class AuthService:
         self.API_KEY = config('API_KEY', cast=str)
         self.base_headers = {
             "Content-Type": "application/json",
-            "Api-Key": self.API_KEY,
         }
 
     async def _post(self, url: str, json: dict, headers: dict = None, timeout: int = 20):
-        merged_headers = {**self.base_headers}
+        if headers:
+            self.base_headers.update(headers)
         async with httpx.AsyncClient(timeout=timeout) as client:
-            response = await client.post(url, json=json, headers=merged_headers)
+            response = await client.post(url, json=json, headers=self.base_headers)
             # response.raise_for_status()
             return response.json()
 
@@ -28,14 +28,20 @@ class AuthService:
             "zip_code": "0098",
             "mobile": phone
         }
-        return await self._post(self.LOGIN_URL, json=request_body)
+        header = {
+            "Api-Key": self.API_KEY,
+        }
+        return await self._post(self.LOGIN_URL, json=request_body, headers=header)
 
     async def verify_code(self, phone: str, code: str):
         request_body = {
             "mobile_number": phone,
             "verify_code": code
         }
-        return await self._post(self.VERIFY_URL, json=request_body)
+        header = {
+            "Api-Key": self.API_KEY,
+        }
+        return await self._post(self.VERIFY_URL, json=request_body, headers=header)
 
     async def logout(self, access_token: str, refresh_token: str):
         request_body = {
