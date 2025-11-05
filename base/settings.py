@@ -10,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY', cast=str)
+SECRET_KEY = config('SECRET_KEY', cast=str, default='Hello World!')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", cast=bool, default=True)
@@ -72,12 +72,12 @@ ASGI_APPLICATION = "base.asgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": config("PGDB_ENGINE", default="django.db.backends.postgresql"),
-        "NAME": config("POSTDB_NAME", cast=str),
-        "USER": config("POSTDB_USER", cast=str),
-        "PASSWORD": config("POSTDB_PASSWORD", cast=str),
-        "HOST": config("POSTDB_HOST", cast=str),
-        "PORT": config("POSTDB_PORT", cast=int),
+        "ENGINE": config("PGDB_ENGINE", default="django.db.backends.postgresql", cast=str),
+        "NAME": config("POSTDB_NAME", cast=str, default="postgres"),
+        "USER": config("POSTDB_USER", cast=str, default="postgres"),
+        "PASSWORD": config("POSTDB_PASSWORD", cast=str, default="postgres"),
+        "HOST": config("POSTDB_HOST", cast=str, default="127.0.0.1"),
+        "PORT": config("POSTDB_PORT", cast=int, default=5432),
     }
 }
 
@@ -188,7 +188,7 @@ CACHES = {
 if DEBUG:
     CACHES['default']['LOCATION'] = "redis://localhost:6381/1"
 else:
-    CACHES['default']['LOCATION'] = config("PRODU_REDIS_LOCATION")
+    CACHES['default']['LOCATION'] = config("PRODU_REDIS_LOCATION", cast=str)
 
 
 # config package corsheaders
