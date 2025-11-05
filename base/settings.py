@@ -226,5 +226,6 @@ CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 # celery queue
 CELERY_TASK_QUEUES = {
     Queue("refresh_token"),
-    Queue("logout_user")
+    Queue("logout_user"),
+    Queue("login_user")
 }

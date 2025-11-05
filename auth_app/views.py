@@ -18,7 +18,7 @@ from auth_app.forms import (
     CivilRegistry
 )
 from base.utils.mixin import RedirectAuthenticatedUserMixin
-from auth_app.tasks import task_logout_user
+from auth_app.tasks import task_logout_user, task_send_login_request
 
 
 class RequestPhoneView(RedirectAuthenticatedUserMixin, View):
@@ -34,8 +34,7 @@ class RequestPhoneView(RedirectAuthenticatedUserMixin, View):
         if form.is_valid():
             phone = form.cleaned_data['phone']
 
-            login_service = AuthService()
-            result = login_service.send_login_request(phone)
+            result = task_send_login_request.delay(phone)
 
             if result['Success']:
                 request.session['phone'] = phone

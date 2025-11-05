@@ -45,11 +45,6 @@ def refresh_expiring_tokens():
     asyncio.run(process_tokens())
 
 
-import asyncio
-from celery import shared_task
-from auth_app.clasess import AuthService
-
-
 @shared_task(queue="logout_user", max_retries=3)
 def task_logout_user(access_token: str, refresh_token: str):
     auth = AuthService()
@@ -58,3 +53,13 @@ def task_logout_user(access_token: str, refresh_token: str):
         await auth.logout(access_token, refresh_token)
 
     asyncio.run(logout_async())
+
+
+@shared_task(queue="login_user", max_retries=3)
+def task_send_login_request(phone: str):
+
+    async def async_request():
+        login_service = AuthService()
+        result = await login_service.send_login_request(phone)
+        return result
+    asyncio.run(async_request())
