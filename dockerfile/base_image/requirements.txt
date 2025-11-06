@@ -1,0 +1,42 @@
+# framework
+django==5.2.7
+
+# shell python
+ipython==9.6.0
+
+# driver postgresql
+psycopg2-binary==2.9.11
+
+# env control
+python-decouple==3.8
+
+# work with image
+pillow==12.0.0
+
+# debug and analysis  
+django-debug-toolbar==6.1.0
+
+# cache
+django-redis==6.0.0
+
+# rest
+djangorestframework==3.16.1
+
+# jwt
+djangorestframework-simplejwt==5.5.1
+
+# cors
+django-cors-headers==4.9.0
+
+# shamsi date
+jdatetime==5.2.0
+
+# background task
+celery==5.5.3
+
+# celery result task
+django-celery-results==2.6.0
+
+# request url
+httpx==0.28.1
+requests==2.32.5

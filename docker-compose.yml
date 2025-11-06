@@ -1,0 +1,46 @@
+services:
+  app:
+    container_name: leno_app
+    volumes:
+      - static_files:/home/app/static
+    image: leno_image:1.0.0
+    build:
+      context: .
+    env_file: ".env"
+    restart: always
+    ports:
+      - "8000:8000"
+    entrypoint: "python manage.py runserver"
+    depends_on:
+      - db
+
+  redis:
+    container_name: leno_redis
+    image: docker.arvancloud.ir/redis:8.2.1
+    restart: always
+    expose:
+      - 6379
+    command: redis-server --save 60 1 --loglevel warning
+
+  db:
+    container_name: db
+    entrypoint:
+      - POSTGRES_DB=${POSTDB_NAME}
+      - POSTGRES_USER=${POSTDB_USER}
+      - POSTGRES_PASSWORD=${POSTDB_PASSWORD}
+    image: docker.arvancloud.ir/postgres:17-alpine
+    restart: always
+    volumes:
+      - postgres_volume:/var/lib/postgresql/data
+    expose:
+      - 5432
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+volumes:
+  postgres_volume:
+  static_files:
