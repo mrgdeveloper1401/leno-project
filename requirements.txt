@@ -40,3 +40,11 @@ django-celery-results==2.6.0
 # request url
 httpx==0.28.1
 requests==2.32.5
+
+# webserver python
+gunicorn==23.0.0
+uvicorn-worker==0.4.0
+uvicorn==0.38.0
+
+# log
+colorlog==6.10.1

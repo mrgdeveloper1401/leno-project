@@ -1,35 +1,65 @@
 services:
-  app:
+  backend:
     container_name: leno_app
     volumes:
       - static_files:/home/app/static
-    image: leno_image:1.0.0
     build:
       context: .
+      dockerfile: dockerfile/prod/Dockerfile
     env_file: ".env"
     restart: always
+    expose:
+      - 8000
     ports:
       - "8000:8000"
-    entrypoint: "python manage.py runserver"
     depends_on:
       - db
+      - redis
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  nginx:
+    container_name: leno_nginx
+    restart: always
+    build:
+      context: .
+      dockerfile: dockerfile/nginx/Dockerfile
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - static_files:/var/www/static
+    depends_on:
+      - backend
+    healthcheck:
+      test: [ "CMD", "nginx", "-t" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   redis:
     container_name: leno_redis
     image: docker.arvancloud.ir/redis:8.2.1
     restart: always
+    ports:
+      - "6379:6379"
     expose:
       - 6379
     command: redis-server --save 60 1 --loglevel warning
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   db:
-    container_name: db
-    entrypoint:
-      - POSTGRES_DB=${POSTDB_NAME}
-      - POSTGRES_USER=${POSTDB_USER}
-      - POSTGRES_PASSWORD=${POSTDB_PASSWORD}
+    container_name: leno_postgres
     image: docker.arvancloud.ir/postgres:17-alpine
     restart: always
+    env_file: "db.env"
     volumes:
       - postgres_volume:/var/lib/postgresql/data
     expose:

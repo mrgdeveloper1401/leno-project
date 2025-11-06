@@ -380,3 +380,5 @@ pyrightconfig.json
 test_code.py
 staticfiles
 static
+db.env
+general_log_django

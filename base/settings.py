@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from decouple import config, Csv
+from django.utils import timezone
 from kombu import Queue
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -245,3 +246,44 @@ STORAGES = {
             'BACKEND': config("STORAGE_STATIC_FILES", cast=str, default='whitenoise.storage.CompressedManifestStaticFilesStorage'),
         }
 }
+
+if config("USER_LOG", cast=bool, default=True):
+    log_dir = os.path.join('general_log_django', timezone.now().strftime("%Y-%m-%d"))
+    os.makedirs(log_dir, exist_ok=True)
+    LOGGING = {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "formatters": {
+            "color": {
+                "()": "colorlog.ColoredFormatter",
+                "format": "%(log_color)s%(levelname)s %(reset)s%(asctime)s %(module)s %(process)d %(thread)d %(message)s",
+                "datefmt": "%Y-%m-%d %H:%M:%S",
+            },
+        },
+        "handlers": {
+            "error_file": {
+                "level": "ERROR",
+                "class": "logging.FileHandler",
+                "formatter": "color",
+                "filename": os.path.join(log_dir, 'error_file.log')
+            },
+            "warning_file": {
+                "level": "WARN",
+                "class": "logging.FileHandler",
+                "formatter": "color",
+                "filename": os.path.join(log_dir, 'warning_file.log')
+            },
+            "critical_file": {
+                "level": "CRITICAL",
+                "class": "logging.FileHandler",
+                "formatter": "color",
+                "filename": os.path.join(log_dir, 'critical_file.log')
+            },
+        },
+        "loggers": {
+            "django": {
+                "handlers": ["warning_file", "critical_file", "error_file"],
+                'propagate': True,
+            }
+        }
+    }
