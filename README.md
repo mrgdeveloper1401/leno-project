@@ -41,6 +41,31 @@ There is a file named .env.sample which is the variables file for the project.
 vim .env or touch .env
 ``
 
+# Production usage
+```commandline
+cd dockerfile/base_image
+```
+
+```commandline
+docker build -t leno_image:1.0.0 .
+```
+
+second --> create file .env and db.env for environment backend and postgres
+```commandline
+touch .env
+touch db.env
+```
+third --> in nginx.conf file edit directive server_name
+```commandline
+cd dockerfile/nginx
+```
+
+four --> build project
+
+```commandline
+dockerc-compose up --build -d
+```
+
 # License
 MIT.
 
