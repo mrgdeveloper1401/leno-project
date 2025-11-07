@@ -43,6 +43,13 @@ There is a file named .env.sample which is the variables file for the project.
 vim .env or touch .env
 ``
 
+run celery and celery beat
+
+```commandline
+celery -A base.dj_celery wroker -l INFO
+celery -A base.dj_celery beat
+```
+
 # Production usage
 ```commandline
 cd dockerfile/base_image
